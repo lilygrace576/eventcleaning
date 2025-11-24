@@ -19,9 +19,9 @@ mkdir -p DataAnalysis/MergedData/Output/$DATE/
 mkdir -p DataAnalysis/flasher_calibration/Output/
 
 mv Merged_$FILENAME DataAnalysis/MergedData/Output/$DATE/
-echo "Running FileMerge for $DATE and File $FILENAME"
+echo "Running flasher calibration for $DATE and File $FILENAME"
 # ldd ./FileMerge
-./FlasherCalibration $DATE y
+./FlasherCalibration $DATE y $FILENAME
 
 cd 
 cd DataAnalysis/flasher_calibration/Output/
