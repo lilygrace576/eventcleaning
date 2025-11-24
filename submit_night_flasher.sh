@@ -11,7 +11,7 @@ if [ -z "$INPUT" ]; then
 fi
 
 SUBMIT_TEMPLATE="condense_SM.submit"
-BASE_DIR="/storage/osg-otte1/shared/TrinityDemonstrator/MergedData/Output/"
+BASE_DIR="/storage/osg-otte1/shared/TrinityDemonstrator/DataAnalysis/MergedData/Output"
 
 # Determine if input is a file or a single date
 if [ -f "$INPUT" ]; then
@@ -52,7 +52,7 @@ for DATE in $DATES; do
 
   #echo "Submitting job for: $BASENAME"
   # ?
-  condor_submit Date="$DATE"
+  condor_submit Date="$DATE" "$SUBMIT_TEMPLATE"
 
   #echo "Submitted all jobs for date $DATE"
   #echo "---------------------------------------------"
