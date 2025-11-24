@@ -8,7 +8,8 @@ universe = local
 executable = run_condor.sh
  # name of the bash script or python or root 
 
-arguments = $(Date)
+arguments = $(Date) $Filename
+# added filename arg
 
 # Keep your environment variables
 #getenv = False
