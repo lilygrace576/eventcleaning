@@ -39,18 +39,19 @@ for DATE in $DATES; do
 
   echo "Processing date: $DATE"
   
-  # ??
+### needed??
   OUTLIST="condor_lists/file_list_${DATE}.txt"
 
   rm -f "$OUTLIST"
   for f in "$TARGET_DIR"/*.root; do
       echo "${f##*/}" >> "$OUTLIST"
   done
-  
-  # ??
   cp "$OUTLIST" /storage/osg-otte1/shared/TrinityDemonstrator/DataAnalysis/data_lists/
   echo "Created $OUTLIST with $(wc -l < "$OUTLIST") files"
+### ??
+
   #echo "Submitting job for: $BASENAME"
+  # ?
   condor_submit Date="$DATE"
 
   #echo "Submitted all jobs for date $DATE"
