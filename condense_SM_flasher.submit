@@ -14,13 +14,13 @@ arguments = $(Date) $Filename
 # Keep your environment variables
 #getenv = False
 
-log = $(sysFilePath)/DataAnalysis/flasher_calibration/.logs/HT_condor_$(Date)_$(Filename).log 
+log = $(sysFilePath)/DataAnalysis/flasher_calibration/.log/HT_condor_$(Date)_$(Filename).log 
 # HTCondor log
 
-error = $(sysFilePath)/DataAnalysis/flasher_calibration/.logs/Program_$(Date)_$(Filename).err 
+error = $(sysFilePath)/DataAnalysis/flasher_calibration/.log/Program_$(Date)_$(Filename).err 
 #Standard Error - program and HTCondor errors
 
-output = $(sysFilePath)/DataAnalysis/flasher_calibration/.logs/Program_$(Date)_$(Filename).out 
+output = $(sysFilePath)/DataAnalysis/flasher_calibration/.log/Program_$(Date)_$(Filename).out 
 # program terminal output (not output files)
 
 
