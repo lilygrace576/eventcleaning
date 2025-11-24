@@ -16,6 +16,8 @@ arguments = $(Date) $Filename
 
 log = $(sysFilePath)/DataAnalysis/flasher_calibration/.log/HT_condor_$(Date)_$(Filename).log 
 # HTCondor log
+# change permissions of log files?
+chmod 775 log
 
 error = $(sysFilePath)/DataAnalysis/flasher_calibration/.log/Program_$(Date)_$(Filename).err 
 #Standard Error - program and HTCondor errors
