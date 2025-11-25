@@ -52,6 +52,7 @@ for DATE in $DATES; do
 
   #echo "Submitting job for: $BASENAME"
   # ?
+  chmod 774 /storage/osg-otte1/shared/TrinityDemonstrator/DataAnalysis/flasher_calibration/Output/
   condor_submit Date="$DATE" "$SUBMIT_TEMPLATE"
 
   #echo "Submitted all jobs for date $DATE"
