@@ -8,7 +8,8 @@ universe = local
 executable = run_condor.sh
  # name of the bash script or python or root 
 
-arguments = $(Date) $Filename $ENV(USER)
+# add folder arg
+arguments = $(Date) $(Filename) $ENV(USER) $(Folder)
 # added filename and user arg
 
 # Keep your environment variables
@@ -27,8 +28,8 @@ chmod 775 error
 output = $(sysFilePath)/DataAnalysis/flasher_calibration/.log/Program_$(Date)_$(Filename).out 
 # program terminal output (not output files)
 
-
-transfer_input_files = $(sysFilePath)/DataAnalysis/flasher_calibration/Output/$(Date),$(sysFilePath)/DataAnalysis/flasher_calibration/FlasherCalibration,$(sysFilePath)/DataAnalysis/flasher_calibration/run_condor.sh,$(sysFilePath)/DataAnalysis/containers/rootandexact.sif
+# add folder arg to paths
+transfer_input_files = $(sysFilePath)/DataAnalysis/flasher_calibration/Output/$(Folder)/$(Date),$(sysFilePath)/DataAnalysis/flasher_calibration/FlasherCalibration,$(sysFilePath)/DataAnalysis/flasher_calibration/run_condor.sh,$(sysFilePath)/DataAnalysis/containers/rootandexact.sif
 #any file that needs to included for the job - everything minus executable
 
 
