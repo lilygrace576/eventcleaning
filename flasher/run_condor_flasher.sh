@@ -13,18 +13,24 @@ FILENAME=$2
 ##
 theUser=$3
 ##
+FOLDER=$4
+##
+
 echo "Running job for $DATE with file $FILENAME "
 echo "Directories"
 ls -lh
 
 # Create necessary directories if they don't exist
-mkdir -p DataAnalysis/MergedData/Output/$DATE/
+# add folder arg to merged data path
+mkdir -p DataAnalysis/MergedData/Output/$FOLDER/$DATE/
 mkdir -p DataAnalysis/flasher_calibration/Output/
 
-mv Merged_$FILENAME DataAnalysis/MergedData/Output/$DATE/
+# add folder arg to merged data path
+mv Merged_$FILENAME DataAnalysis/MergedData/Output/$FOLDER/$DATE/
 echo "Running flasher calibration for $DATE and File $FILENAME"
 # ldd ./FileMerge
-./FlasherCalibration $DATE y $FILENAME
+# add folder arg
+./FlasherCalibration $DATE y $FILENAME $FOLDER
 
 cd 
 cd DataAnalysis/flasher_calibration/Output/
