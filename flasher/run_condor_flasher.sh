@@ -35,8 +35,8 @@ echo "Running flasher calibration for $DATE and File $FILENAME"
 cd 
 cd DataAnalysis/flasher_calibration/Output/
 chmod 774 *.root
-mv DataFiles ${theUser}_DataFiles
-cd ${theUser}_DataFiles
+mv FlashCalib ${theUser}_FlashCalib
+cd ${theUser}_FlashCalib
 pwd
 for f in *.root; do
     [ -e "$f" ] || continue  # skip if no .root files
