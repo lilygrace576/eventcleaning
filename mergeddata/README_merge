@@ -28,6 +28,12 @@ To run a single file use
 ** You will need to move the root file upon completation unless you start the watcher script **
 
 **** my changes ****
+adding in another argument for the user for output directory
+condense_SM.submit and run_condor.sh
+will output files in MergedData/Output/theUser_MergedFiles/
+
+changing file paths in cpp scripts where it outputs to /MergedData/Output/ ?
+runFile3.cpp, AddSiPmInfoToEvents.cpp
 
 
 
