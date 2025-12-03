@@ -6,32 +6,33 @@
 
 
 int main(int argc, char **argv){
-    if(argc < 1){
+    // change arg number
+    if(argc < 3){
         cout << "Too few arguments; please include the date (YYYYMMDD) data directory to summarize" << endl;
 		return 1;
 	}
     
+    // argv[0]: executable, argv[1]: date, argv[2]: mount, argv[3]: filename, argv[4]: folder
+
     std::string mount = argv[2];
     std::string filename_argument = "";
     filename_argument = argv[3];
+    // add folder input arg
+    std::string folder = arv[4];
     
     if (mount == "y"){ // with usingin htcondor you need to have contianers and some use full paths and other use mounts this lets you specify
         std::cout << "using mounted directory path" << std::endl;
         mnt="/mnt/";
-        dataDir = "/mnt/DataAnalysis/MergedData/Output/";
-        neighborDir = "/mnt/DataAnalysis/event_cleaning/ClusterCleaning/neighbors/";
-        CalibrationFactorDir = "/mnt/DataAnalysis/flasher_calibration/Output/";
-        outDir = "/mnt/DataAnalysis/event_cleaning/Output/";
-        simDir = "/mnt/DataAnalysis/SimulationAnalysis/scripts/first_setdata/";
     } else if (mount != "n"){
         std::cout << "using specific directory path" << std::endl;
         mnt=mount.c_str();
-        dataDir = Form("%sDataAnalysis/MergedData/Output/",mnt.c_str());
-        neighborDir = Form("%sDataAnalysis/event_cleaning/ClusterCleaning/neighbors/",mnt.c_str());
-        CalibrationFactorDir = Form("%sDataAnalysis/flasher_calibration/Output/",mnt.c_str());
-        outDir = Form("%sDataAnalysis/event_cleaning/Output/",mnt.c_str());
-        simDir = Form("%sDataAnalysis/SimulationAnalysis/scripts/first_setdata/",mnt.c_str());
     }
+    // add folder arg to dataDir and CalibrationFactorDir paths 
+    dataDir = Form("%sDataAnalysis/MergedData/Output/%s/",mnt.c_str(), folder.c_str());
+    neighborDir = Form("%sDataAnalysis/event_cleaning/ClusterCleaning/neighbors/",mnt.c_str());
+    CalibrationFactorDir = Form("%sDataAnalysis/flasher_calibration/Output/%s/",mnt.c_str(), folder.c_str());
+    outDir = Form("%sDataAnalysis/event_cleaning/Output/",mnt.c_str());
+    simDir = Form("%sDataAnalysis/SimulationAnalysis/scripts/first_setdata/",mnt.c_str());
 
     
 
