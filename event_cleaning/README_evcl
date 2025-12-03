@@ -17,7 +17,6 @@ Use ./submit_night.sh YYYYMMDD for a single batched night or
 Sample ./submit_nights.sh condor_list/Rank8.csv
 
 
-
 Reducing the output to a single file per night
 use the ./run_reduce_script.sh path/to/directory 
 sample ./run_reduce_script.sh Outputs/sstepanoff3_DataFiles
@@ -39,4 +38,7 @@ condor_submit "Date=YYYYMMDD" "Filename=Mergedfile" condense_SM.submit
     Container: rootandexact.sif 
 run_condor.sh - this creates the container enviroment for running the event cleaning and all the files organized into the correct file structure. 
 
+*** my changes ***
+changing file paths where it draws from MergedData/Output or flasher_calibration/Output so it draws from the right directory for the user
+submit_night.sh, run_condor.sh, EventCleaning.cpp
 
