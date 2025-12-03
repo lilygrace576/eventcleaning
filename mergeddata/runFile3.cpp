@@ -36,6 +36,7 @@ int main(int argc, char **argv){
     }
     //Set the file in and file directories
     std::string fileDirIn = Form("%sData/%s/RawDataMerged",mnt.c_str(),folString.c_str());
+    // get rid of date arg at end??
     std::string fileDirOut = Form("%sDataAnalysis/MergedData/Output/%s",mnt.c_str(),folString.c_str());
 
 	// load in all the csv data into the class to be accessed later easily
