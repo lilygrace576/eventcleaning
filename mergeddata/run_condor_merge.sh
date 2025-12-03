@@ -63,8 +63,22 @@ echo "Running Calibration for $DATE and File $FILENAME"
 ls -lh
 
 cd 
-cd DataAnalysis/MergedData/Output/$DATE/
+# used to have $DATE/ at end
+cd DataAnalysis/MergedData/Output/
 chmod 774 Merged_${FILENAME}
+mv MergedFiles ${theUser}_MergedFiles
+cd ${theUser}_MergedFiles
+pwd
+for f in *.root; do
+    [ -e "$f" ] || continue  # skip if no .root files
+    time=$(echo "$FILENAME" | grep -oP '\d{4}-\d{2}-\d{2}T\K\d{2}:\d{2}')
+    echo "Time extracted: $time"
+    newname="${f%.root}_$time.root"
+    echo "Renaming: $f → $newname"
+    mv "$f" "$newname"
+done
+cd 
+
 pwd
 ls -lh
 
