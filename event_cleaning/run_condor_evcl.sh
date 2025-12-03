@@ -11,6 +11,7 @@ export LD_LIBRARY_PATH=/exact/dict:/usr/lib/oracle/21/client64/lib:/usr/local/li
 DATE=$1
 FILENAME=$2
 theUser=$3
+FOLDER=$4
 # add folder arg
 echo "Running job for $DATE with file $FILENAME "
 echo "Directories"
