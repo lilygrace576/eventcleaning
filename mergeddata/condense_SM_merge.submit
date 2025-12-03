@@ -8,18 +8,25 @@ container_image = $(sysFilePath)/DataAnalysis/containers/rootandexact.sif
 executable = run_condor.sh
  # name of the bash script or python or root 
 
-arguments = $(Date) $(Filename) 
+# add user arg and getenv = True
+arguments = $(Date) $(Filename) $ENV(USER)
+getenv = True
 
 # Keep your environment variables
 #getenv = False
 
-log = $(sysFilePath)/DataAnalysis/MergedData/.logs/HT_condor_$(Date)_$(Filename).log 
+# include user 
+log = $(sysFilePath)/DataAnalysis/MergedData/.logs/HT_condor_$ENV(USER)_$(Date)_$(Filename).log 
 # HTCondor log
 
-error = $(sysFilePath)/DataAnalysis/MergedData/.logs/LS_MergedFiles/Program_$(Date)_$(Filename).err 
+# include user 
+# need to figure out how to make LS_MergedFiles user specific!!
+error = $(sysFilePath)/DataAnalysis/MergedData/.logs/LS_MergedFiles/Program_$ENV(USER)_$(Date)_$(Filename).err 
 #Standard Error - program and HTCondor errors
 
-output = $(sysFilePath)/DataAnalysis/MergedData/.logs/LS_MergedFiles/Program_$(Date)_$(Filename).out 
+# include user 
+# need to figure out how to make LS_MergedFiles user specific!!
+output = $(sysFilePath)/DataAnalysis/MergedData/.logs/LS_MergedFiles/Program_$ENV(USER)_$(Date)_$(Filename).out 
 # program terminal output (not output files)
 
 
