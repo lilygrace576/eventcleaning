@@ -18,15 +18,15 @@ ls -lh
 
 # Create necessary directories if they don't exist
 # add folder arg to path 
-mkdir -p DataAnalysis/MergedData/Output/$DATE/$FOLDER/
+mkdir -p DataAnalysis/MergedData/Output/$FOLDER/$DATE/
 mkdir -p DataAnalysis/event_cleaning/ClusterCleaning/
 mkdir -p DataAnalysis/event_cleaning/Output/
 # add folder arg to path 
-mkdir -p DataAnalysis/flasher_calibration/Output/$FOLDER/
+mkdir -p DataAnalysis/flasher_calibration/$FOLDER/Output/
 mkdir -p DataAnalysis/event_cleaning/Output/
 
 # add folder arg to path 
-mv $FILENAME DataAnalysis/MergedData/Output/$DATE/$FOLDER/
+mv $FILENAME DataAnalysis/MergedData/Output/$FOLDER/$DATE/
 mv neighbors DataAnalysis/event_cleaning/ClusterCleaning/
 # mv EventInfo.h DataAnalysis/event_cleaning/ClusterCleaning/
 # mv EventInfoDict_rdict.pcm DataAnalysis/event_cleaning/ClusterCleaning/
