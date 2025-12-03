@@ -8,7 +8,8 @@ container_image = $(sysFilePath)/DataAnalysis/containers/rootandexact.sif
 executable = run_condor.sh
  # name of the bash script or python or root 
 
-arguments = $(Date) $(Filename) $ENV(USER)
+# add folder arg
+arguments = $(Date) $(Filename) $ENV(USER) $(Folder)
 getenv = True
 
 # Keep your environment variables
@@ -23,8 +24,8 @@ error = $(sysFilePath)/DataAnalysis/event_cleaning/.logs/Program_$ENV(USER)_$(Da
 output = $(sysFilePath)/DataAnalysis/event_cleaning/.logs/Program_$ENV(USER)_$(Date)_$(Filename).out 
 # program terminal output (not output files)
 
-
-transfer_input_files = $(sysFilePath)/DataAnalysis/MergedData/Output/$(Date)/$(Filename),\
+# add folder arg to paths
+transfer_input_files = $(sysFilePath)/DataAnalysis/MergedData/Output/$(Folder)/$(Date)/$(Filename),\
 $(sysFilePath)/DataAnalysis/event_cleaning/ClusterCleaning/EventCleaning,\
 $(sysFilePath)/DataAnalysis/event_cleaning/ClusterCleaning/EventInfoDict_rdict.pcm,\
 $(sysFilePath)/DataAnalysis/event_cleaning/ClusterCleaning/EventInfo.h,\
@@ -32,7 +33,7 @@ $(sysFilePath)/DataAnalysis/event_cleaning/ClusterCleaning/LinkDef.h,\
 $(sysFilePath)/DataAnalysis/event_cleaning/ClusterCleaning/neighbors, \
 $(sysFilePath)/DataAnalysis/event_cleaning/run_condor.sh,\
 $(sysFilePath)/DataAnalysis/containers/rootandexact.sif,\
-$(sysFilePath)/DataAnalysis/flasher_calibration/Output/$(Date)_FlasherCalibration_Factor.root
+$(sysFilePath)/DataAnalysis/flasher_calibration/Output/$(Folder)/$(Date)_FlasherCalibration_Factor.root
 #any file that needs to included for the job - everything minus executable
 #might need to change file path for flasher_calibration for user directory
 
