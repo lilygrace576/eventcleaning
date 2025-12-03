@@ -11,30 +11,38 @@ export LD_LIBRARY_PATH=/exact/dict:/usr/lib/oracle/21/client64/lib:/usr/local/li
 DATE=$1
 FILENAME=$2
 theUser=$3
+# add folder arg
 echo "Running job for $DATE with file $FILENAME "
 echo "Directories"
 ls -lh
 
 # Create necessary directories if they don't exist
-
-mkdir -p DataAnalysis/MergedData/Output/$DATE/
+# add folder arg to path 
+mkdir -p DataAnalysis/MergedData/Output/$DATE/$FOLDER/
 mkdir -p DataAnalysis/event_cleaning/ClusterCleaning/
 mkdir -p DataAnalysis/event_cleaning/Output/
-mkdir -p DataAnalysis/flasher_calibration/Output/
+# add folder arg to path 
+mkdir -p DataAnalysis/flasher_calibration/Output/$FOLDER/
 mkdir -p DataAnalysis/event_cleaning/Output/
 
-mv $FILENAME DataAnalysis/MergedData/Output/$DATE/
+# add folder arg to path 
+mv $FILENAME DataAnalysis/MergedData/Output/$DATE/$FOLDER/
 mv neighbors DataAnalysis/event_cleaning/ClusterCleaning/
 # mv EventInfo.h DataAnalysis/event_cleaning/ClusterCleaning/
 # mv EventInfoDict_rdict.pcm DataAnalysis/event_cleaning/ClusterCleaning/
 # mv LinkDef.h DataAnalysis/event_cleaning/ClusterCleaning/
 # mv EventCleaning DataAnalysis/event_cleaning/ClusterCleaning/
-mv ${DATE}_FlasherCalibration_Factor.root DataAnalysis/flasher_calibration/Output/
+
+# add folder arg to path 
+mv ${DATE}_FlasherCalibration_Factor.root DataAnalysis/flasher_calibration/Output/$FOLDER/
 
 echo "Running eventcleaning for $DATE and File $FILENAME"
 # ldd ./FileMerge
 
-./EventCleaning $DATE ~/ $FILENAME
+# add folder arg 
+# ~/ ??
+./EventCleaning $DATE ~/ $FILENAME ~/ $FOLDER
+
 # # sleep 10
 # echo "Running Calibration for $DATE and File $FILENAME"
 # ./AddCalibData $DATE /srv/ Merged_$FILENAME
