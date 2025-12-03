@@ -9,24 +9,28 @@ executable = run_condor.sh
  # name of the bash script or python or root 
 
 # add user arg and getenv = True
-arguments = $(Date) $(Filename) $ENV(USER)
+# add folder arg t use in .logs paths????
+arguments = $(Date) $(Filename) $ENV(USER) $(folder)
 getenv = True
 
 # Keep your environment variables
 #getenv = False
 
 # include user 
+# add $(folder) after /.logs/ ??
 log = $(sysFilePath)/DataAnalysis/MergedData/.logs/HT_condor_$ENV(USER)_$(Date)_$(Filename).log 
 # HTCondor log
 
 # include user 
-# need to figure out how to make LS_MergedFiles user specific!!
-error = $(sysFilePath)/DataAnalysis/MergedData/.logs/LS_MergedFiles/Program_$ENV(USER)_$(Date)_$(Filename).err 
+# need to figure out how to make LS_MergedFiles user specific!! - change to $(folder)??
+# error = $(sysFilePath)/DataAnalysis/MergedData/.logs/LS_MergedFiles/Program_$ENV(USER)_$(Date)_$(Filename).err
+error = $(sysFilePath)/DataAnalysis/MergedData/.logs/$(folder)/Program_$ENV(USER)_$(Date)_$(Filename).err 
+
 #Standard Error - program and HTCondor errors
 
 # include user 
-# need to figure out how to make LS_MergedFiles user specific!!
-output = $(sysFilePath)/DataAnalysis/MergedData/.logs/LS_MergedFiles/Program_$ENV(USER)_$(Date)_$(Filename).out 
+# need to figure out how to make LS_MergedFiles user specific!! - change to $(folder)??
+output = $(sysFilePath)/DataAnalysis/MergedData/.logs/$(folder)/Program_$ENV(USER)_$(Date)_$(Filename).out 
 # program terminal output (not output files)
 
 
