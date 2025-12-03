@@ -28,8 +28,9 @@ chmod 775 error
 output = $(sysFilePath)/DataAnalysis/flasher_calibration/.log/Program_$(Date)_$(Filename).out 
 # program terminal output (not output files)
 
-# add folder arg to paths
-transfer_input_files = $(sysFilePath)/DataAnalysis/flasher_calibration/Output/$(Folder)/$(Date),$(sysFilePath)/DataAnalysis/flasher_calibration/FlasherCalibration,$(sysFilePath)/DataAnalysis/flasher_calibration/run_condor.sh,$(sysFilePath)/DataAnalysis/containers/rootandexact.sif
+# add folder arg to paths input 
+# changed flasher_calibration output path to merged data output path
+transfer_input_files = $(sysFilePath)/DataAnalysis/MergedData/Output/$(Folder)/$(Date),$(sysFilePath)/DataAnalysis/flasher_calibration/FlasherCalibration,$(sysFilePath)/DataAnalysis/flasher_calibration/run_condor.sh,$(sysFilePath)/DataAnalysis/containers/rootandexact.sif
 #any file that needs to included for the job - everything minus executable
 
 
