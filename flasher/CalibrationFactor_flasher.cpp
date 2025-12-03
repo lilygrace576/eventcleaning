@@ -8,13 +8,15 @@ int main(int argc, char **argv){
 	}
 
     std::string mount = argv[2];
+    std::string folder = argv[3]
     
     if (mount == "y"){ // with usingin htcondor you need to have contianers and some use full paths and other use mounts this lets you specify
         std::cout << "using mounted directory path" << std::endl;
         mnt="/mnt/";
-        dataDir = "/mnt/DataAnalysis/MergedData/Output/";
-        outDir = "/mnt/DataAnalysis/flasher_calibration/Output/";
     }
+    // add folder arg to paths
+    dataDir = Form("%sDataAnalysis/MergedData/Output/%s/",mnt.c_str(), folder.c_str());
+    outDir = Form("%sDataAnalysis/flasher_calibration/Output/%s/",mnt.c_str(), folder.c_str());
 
     std::string folString = argv[1];
 
