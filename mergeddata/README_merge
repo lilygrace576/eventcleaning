@@ -35,5 +35,7 @@ will output files in MergedData/Output/theUser_MergedFiles/
 changing file paths in cpp scripts where it outputs to /MergedData/Output/ ?
 runFile3.cpp, AddSiPmInfoToEvents.cpp
 
+condense_SM.submit:
+need to change .logs/ paths to include a folder since permissions are weird for those files and i had make copies of them to use them - i put them in a directory called LS_MergedFiles within .logs/ - need to make that user specific
 
 
