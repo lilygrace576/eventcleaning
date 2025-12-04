@@ -4,9 +4,12 @@
 # Example: ./move_merged_files.sh /data/incoming /data/organized
 
 src_dir="$1"
+# . = directory in now
 dest_root="$2"
+# Output directory
 # add user
 theUser="$3"
+# for Output/user directory
 
 # Check input arguments
 if [ -z "$src_dir" ] || [ -z "$dest_root" ]; then
