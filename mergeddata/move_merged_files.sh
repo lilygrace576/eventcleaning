@@ -5,6 +5,8 @@
 
 src_dir="$1"
 dest_root="$2"
+# add user
+theUser="$3"
 
 # Check input arguments
 if [ -z "$src_dir" ] || [ -z "$dest_root" ]; then
@@ -35,7 +37,7 @@ for file in "$src_dir"/Merged_CoBo0_AsAd0_*.root; do
     date_compact=${date_part//-/}
 
     # Make destination directory
-    dest_dir="$dest_root/$date_compact"
+    dest_dir="$dest_root/$theUser/$date_compact"
     mkdir -p "$dest_dir"
     chmod 774 "$dest_dir"
     
