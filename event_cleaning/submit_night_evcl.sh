@@ -4,8 +4,10 @@
 # Accepts either a single YYYYMMDD or a file containing multiple dates.
 
 INPUT=$1
-# add folde arg
+# add folder arg
 FOLDER=$2
+# add env than arg
+# flag? default to my user or input a dif user name
 
 if [ -z "$INPUT" ]; then
   echo "Usage: $0 <YYYYMMDD | date_file>"

@@ -18,7 +18,8 @@ getenv = True
 log = $(sysFilePath)/DataAnalysis/event_cleaning/.logs/HT_condor_$ENV(USER)_$(Date)_$(Filename).log 
 # HTCondor log
 
-error = $(sysFilePath)/DataAnalysis/event_cleaning/.logs/Program_$ENV(USER)_$(Date)_$(Filename).err 
+## added user env
+error = $(sysFilePath)/DataAnalysis/event_cleaning/.logs/$ENV(USER)/Program_$ENV(USER)_$(Date)_$(Filename).err 
 #Standard Error - program and HTCondor errors
 
 output = $(sysFilePath)/DataAnalysis/event_cleaning/.logs/Program_$ENV(USER)_$(Date)_$(Filename).out 

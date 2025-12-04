@@ -24,7 +24,7 @@ log = $(sysFilePath)/DataAnalysis/MergedData/.logs/HT_condor_$ENV(USER)_$(Date)_
 # include user 
 # need to figure out how to make LS_MergedFiles user specific!! - change to $(folder)??
 # error = $(sysFilePath)/DataAnalysis/MergedData/.logs/LS_MergedFiles/Program_$ENV(USER)_$(Date)_$(Filename).err
-error = $(sysFilePath)/DataAnalysis/MergedData/.logs/$(folder)/Program_$ENV(USER)_$(Date)_$(Filename).err 
+error = $(sysFilePath)/DataAnalysis/MergedData/.logs/$ENV(USER)/Program_$ENV(USER)_$(Date)_$(Filename).err 
 
 #Standard Error - program and HTCondor errors
 
