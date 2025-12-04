@@ -34,6 +34,8 @@ int main(int argc, char **argv){
         fileNamesVec = read_directory(dirName.c_str());
         fileNamesVec.erase(fileNamesVec.begin(), fileNamesVec.begin() + 2);
     }
+
+    // need to delete date arg at end of fileDirOut path??
     //Set the file in and file directories
     std::string fileDirIn = Form("%sData/%s/RawDataMerged",mnt.c_str(),folString.c_str());
     // get rid of date arg at end??
