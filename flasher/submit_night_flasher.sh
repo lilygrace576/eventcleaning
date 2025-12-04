@@ -6,6 +6,7 @@
 INPUT=$1
 # add folder arg
 FOLDER=$2
+# or theUSER=$2 ?
 
 if [ -z "$INPUT" ]; then
   echo "Usage: $0 <YYYYMMDD | date_file>"
@@ -14,7 +15,7 @@ fi
 
 SUBMIT_TEMPLATE="condense_SM.submit"
 # add folder arg to path
-# need brackets?
+# $theUSER instead??
 BASE_DIR="/storage/osg-otte1/shared/TrinityDemonstrator/DataAnalysis/MergedData/Output/$FOLDER/"
 
 # Determine if input is a file or a single date
