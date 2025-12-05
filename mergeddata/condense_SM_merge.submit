@@ -16,6 +16,10 @@ getenv = True
 # Keep your environment variables
 #getenv = False
 
+# add line to make user directory within .logs/ if doesn't already exist
+# syntax? can i do this here or have to do it in run_condor??
+mkdir MergedData/.logs/$ENV(USER)
+
 # add user env to path also to filename
 log = $(sysFilePath)/DataAnalysis/MergedData/.logs/$ENV(USER)/HT_condor__$ENV(USER)$(Date)_$(Filename).log 
 # HTCondor log
