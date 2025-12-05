@@ -4,9 +4,6 @@
 # Accepts either a single YYYYMMDD or a file containing multiple dates.
 
 INPUT=$1
-# add folder arg
-FOLDER=$2
-# or theUSER=$2 ?
 
 if [ -z "$INPUT" ]; then
   echo "Usage: $0 <YYYYMMDD | date_file>"
@@ -14,9 +11,8 @@ if [ -z "$INPUT" ]; then
 fi
 
 SUBMIT_TEMPLATE="condense_SM.submit"
-# add folder arg to path
-# $theUSER instead??
-BASE_DIR="/storage/osg-otte1/shared/TrinityDemonstrator/DataAnalysis/MergedData/Output/$FOLDER/"
+
+BASE_DIR="/storage/osg-otte1/shared/TrinityDemonstrator/DataAnalysis/MergedData/Output/"
 
 # Determine if input is a file or a single date
 if [ -f "$INPUT" ]; then
@@ -56,7 +52,7 @@ for DATE in $DATES; do
 ### ??
 
   #echo "Submitting job for: $BASENAME"
-  # ?
+  
   chmod 774 /storage/osg-otte1/shared/TrinityDemonstrator/DataAnalysis/flasher_calibration/Output/
   condor_submit Date="$DATE" "$SUBMIT_TEMPLATE"
 
