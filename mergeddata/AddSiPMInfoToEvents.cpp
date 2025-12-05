@@ -13,15 +13,11 @@ int main(int argc, char **argv) {
     mount = argv[2];
     std::string filename_argument = "";
     filename_argument = argv[3];
-    // need folder arg?
-    // std::string folder = argv[4];
 
     if (mount != ""){ // with usingin htcondor you need to have contianers and some use full paths and other use mounts this lets you specify
         std::cout << "using mounted directory path" << std::endl;
         mnt=mount.c_str();
-        // need folder arg??
         dataDir = Form("%sDataAnalysis/MergedData/Output/",mnt.c_str());
-        // dataDir = Form("%sDataAnalysis/MergedData/Output/%s/",mnt.c_str(), folder.c_str());
 
     }
 
