@@ -20,11 +20,11 @@ getenv = True
 log = $(sysFilePath)/DataAnalysis/flasher_calibration/.log/$ENV(USER)/HT_condor_$ENV(USER)_$(Date)_$(Filename).log 
 # HTCondor log
 
-# add user env to path
+# add user env to path and filename
 error = $(sysFilePath)/DataAnalysis/flasher_calibration/.log/$ENV(USER)/Program_$ENV(USER)_$(Date)_$(Filename).err 
 #Standard Error - program and HTCondor errors
 
-# add user env to path
+# add user env to path and filename
 output = $(sysFilePath)/DataAnalysis/flasher_calibration/.log/$ENV(USER)/Program_$ENV(USER)_$(Date)_$(Filename).out 
 # program terminal output (not output files)
 
