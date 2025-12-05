@@ -23,14 +23,9 @@ Use ./run_condor.sh - part of the submit for HTCOndors jobs (no done yet)
 
 *** my changes ***
 
-creating submit_night.sh for flasher calibration so we can run the dates as jobs 
+creating submit_night.sh, condense_SM.submit, and run_condor.sh for flasher calibration so we can run the dates as jobs 
 can run either single night or multiple nights from a csv
 
-changing file paths where it draws from MergedData/Output so it draws from the right directory for the user
-submit_night.sh, run_condor.sh, CalibrationFactor.cpp
+no longer drawing from or creating user specific folder within outputs
 
-need to add in user input to executable to specify folder in MergedData/Output like in eventselection for event_cleaning/Output/folder
-
-adding in another argument for the user for output directory
-condense_SM.submit and run_condor.sh
-will output files in flasher_calibration/Output/theUser_FlashCalib/
+adding in user env for .log file paths and file names in condense_SM.submit
