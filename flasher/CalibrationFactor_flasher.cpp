@@ -8,21 +8,19 @@ int main(int argc, char **argv){
 	}
 
     std::string mount = argv[2];
-    std::string folder = argv[3]
     
     if (mount == "y"){ // with usingin htcondor you need to have contianers and some use full paths and other use mounts this lets you specify
         std::cout << "using mounted directory path" << std::endl;
         mnt="/mnt/";
     }
     // add folder arg to paths
-    dataDir = Form("%sDataAnalysis/MergedData/Output/%s/",mnt.c_str(), folder.c_str());
-    outDir = Form("%sDataAnalysis/flasher_calibration/Output/%s/",mnt.c_str(), folder.c_str());
+    dataDir = Form("%sDataAnalysis/MergedData/Output/",mnt.c_str());
+    outDir = Form("%sDataAnalysis/flasher_calibration/Output/",mnt.c_str());
 
     std::string folString = argv[1];
 
     // Load in all the files
-    // added folder arg to path ?
-    std::string FolderPath = Form("%s%s%s/",dataDir.c_str(), folder.c_str(), folString.c_str());
+    std::string FolderPath = Form("%s%s/",dataDir.c_str(), folString.c_str());
     std::vector<std::string>fileNamesVec=util->GetFilesInDirectory(FolderPath,".root");
     cout << fileNamesVec[0] << endl;
     
@@ -175,7 +173,6 @@ int main(int argc, char **argv){
     plottools->DrawMUSICBoundaries();
     // cout << "Minimum: " << minimum << endl;
     
-    // need user directory?
     file = new TFile(Form("%s%s_FlasherCalibration_Factor.root", outDir.c_str(), folString.c_str()), "RECREATE");  // "RECREATE" to overwrite if it exists
     hcam_calib->Write("CamFlasher");
     hcam_calib->SetMinimum(minimum-0.01);
