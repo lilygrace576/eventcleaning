@@ -11,23 +11,21 @@ executable = run_condor.sh
 # add user arg and getenv = True
 arguments = $(Date) $(Filename) $ENV(USER)
 getenv = True
+# added from event_cleaning condense_SM.submit
 
 # Keep your environment variables
 #getenv = False
 
-# include user directory in .logs/
-log = $(sysFilePath)/DataAnalysis/MergedData/.logs/HT_condor_$(Date)_$(Filename).log 
+# add user env to path also to filename
+log = $(sysFilePath)/DataAnalysis/MergedData/.logs/$ENV(USER)/HT_condor__$ENV(USER)$(Date)_$(Filename).log 
 # HTCondor log
 
-# include user directory
-# make LS_MergedFiles user specific - change to user env
-# error = $(sysFilePath)/DataAnalysis/MergedData/.logs/LS_MergedFiles/Program_$(Date)_$(Filename).err
-error = $(sysFilePath)/DataAnalysis/MergedData/.logs/$ENV(USER)/Program_$(Date)_$(Filename).err 
-
+# add user env to path and filename
+error = $(sysFilePath)/DataAnalysis/MergedData/.logs/$ENV(USER)/Program__$ENV(USER)$(Date)_$(Filename).err 
 #Standard Error - program and HTCondor errors
 
-# include user directory
-output = $(sysFilePath)/DataAnalysis/MergedData/.logs/$ENV(USER)/Program_$(Date)_$(Filename).out 
+# add user env to path and filename
+output = $(sysFilePath)/DataAnalysis/MergedData/.logs/$ENV(USER)/Program__$ENV(USER)$(Date)_$(Filename).out 
 # program terminal output (not output files)
 
 
