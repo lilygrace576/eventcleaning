@@ -1,10 +1,8 @@
 #!/bin/bash
 # run_script.sh
+# changed file paths to /home/lilyg/...
 
 DATE=$1
 FILENAME=$2
-# add folder arg
-FOLDER=$3
 echo "Running for $DATE"
-# add folder arg
-apptainer exec --bind /storage/osg-otte1/shared/TrinityDemonstrator:/mnt /storage/osg-otte1/shared/TrinityDemonstrator/DataAnalysis/containers/rootandexact.sif /mnt/DataAnalysis/event_cleaning/ClusterCleaning/EventCleaning $DATE y $FILENAME $FOLDER    
+apptainer exec --bind /home/lilyg/TrinityDemonstrator:/mnt /home/lilyg/TrinityDemonstrator/DataAnalysis/containers/rootandexact.sif /mnt/DataAnalysis/event_cleaning/ClusterCleaning/EventCleaning $DATE y $FILENAME    
