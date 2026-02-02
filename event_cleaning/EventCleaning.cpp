@@ -6,19 +6,14 @@
 
 
 int main(int argc, char **argv){
-    // change arg number
-    if(argc < 3){
+    if(argc < 1){
         cout << "Too few arguments; please include the date (YYYYMMDD) data directory to summarize" << endl;
 		return 1;
 	}
     
-    // argv[0]: executable, argv[1]: date, argv[2]: mount, argv[3]: filename, argv[4]: folder
-
     std::string mount = argv[2];
     std::string filename_argument = "";
     filename_argument = argv[3];
-    // add folder input arg
-    std::string folder = arv[4];
     
     if (mount == "y"){ // with usingin htcondor you need to have contianers and some use full paths and other use mounts this lets you specify
         std::cout << "using mounted directory path" << std::endl;
@@ -27,13 +22,16 @@ int main(int argc, char **argv){
         std::cout << "using specific directory path" << std::endl;
         mnt=mount.c_str();
     }
-    // add folder arg to dataDir and CalibrationFactorDir paths 
-    dataDir = Form("%sDataAnalysis/MergedData/Output/%s/",mnt.c_str(), folder.c_str());
+    
+    dataDir = Form("%sDataAnalysis/MergedData/Output/",mnt.c_str());
     neighborDir = Form("%sDataAnalysis/event_cleaning/ClusterCleaning/neighbors/",mnt.c_str());
-    CalibrationFactorDir = Form("%sDataAnalysis/flasher_calibration/Output/%s/",mnt.c_str(), folder.c_str());
+    CalibrationFactorDir = Form("%sDataAnalysis/flasher_calibration/Output/",mnt.c_str());
     outDir = Form("%sDataAnalysis/event_cleaning/Output/",mnt.c_str());
-    simDir = Form("%sDataAnalysis/SimulationAnalysis/scripts/first_setdata/",mnt.c_str());
-
+    outDirSim = Form("%sDataAnalysis/event_cleaning/OutputSim/",mnt.c_str());
+    outDirBkg = Form("%sDataAnalysis/event_cleaning/OutputBkg/",mnt.c_str());
+    outDirMuon = Form("%sDataAnalysis/event_cleaning/OutputMuon/",mnt.c_str());
+    simDir = Form("%ssimscripts/convertSims/Output/",mnt.c_str());
+    // simDir = Form("%sDataAnalysis/SimulationAnalysis/scripts/first_setdata/",mnt.c_str());
     
 
     // Get the Arguments 
@@ -54,6 +52,7 @@ int main(int argc, char **argv){
         
     } else if (folString.find("muon")==0) {
         whatData = "muon";
+
         fileNamesVec=util->readFileToVectorString(Form("%s%s.txt",muonDir.c_str(),folString.c_str()));
 
     } else if (folString.find("sim")==0) {
@@ -75,7 +74,7 @@ int main(int argc, char **argv){
             ),
             fileNamesVec.end()
         );
-        cout << "Number of simulation files found: " << fileNamesVec[1] << endl;
+        cout << "Number of simulation files found: " << fileNamesVec.size() << endl;
     } else {
         if (filename_argument != "n"){ // if the file name not specified then do all files in the directory
         // std::cout << "using specific file name" << std::endl;
