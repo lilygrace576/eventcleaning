@@ -39,7 +39,7 @@ int main(int argc, char **argv){
         fileNamesVec.end()
     );
 
-    std::vector<double> TotalAmplitudeValues(MaxNofChannels, 0.0);
+    std::vector<double> TotalAmplitudeValues(MaxNofChannels, 0.0);  //MaxNoOfChannels = number of elements in vector, all starting at 0.0
     std::vector<double> AvgAmplitudeValuesPixels(MaxNofChannels, 0.0);
     int hled_event_counter = 0;
 
