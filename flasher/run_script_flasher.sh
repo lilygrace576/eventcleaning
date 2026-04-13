@@ -1,9 +1,12 @@
 #!/bin/bash
 # run_script.sh
 
-DATE=$1
-FILE=$2
-echo "Running for $DATE"
-apptainer exec --bind /storage/osg-otte1/shared/TrinityDemonstrator:/mnt /storage/osg-otte1/shared/TrinityDemonstrator/DataAnalysis/containers/rootandexact.sif /mnt/DataAnalysis/flasher_calibration/FlasherCalibration $DATE y $FILE
+# Change only this to run on a new machine
+LocalPath="/home/sofia.stepanoff" 
 
-# sleep 10
+# Variables date and files 
+DATE=$1 # YYYYMMDD
+FILE=$2 # *.root or n
+# -------------------------------------------------
+echo "Running for $DATE"
+apptainer exec --bind $LocalPath/TrinityDemonstrator:/mnt $LocalPath/TrinityDemonstrator/DataAnalysis/containers/rootandexact.sif /mnt/DataAnalysis/flasher_calibration/FlasherCalibration $DATE y $FILE
