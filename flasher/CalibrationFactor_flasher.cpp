@@ -17,9 +17,7 @@ int main(int argc, char **argv){
         mnt=mount.c_str();
     }
 
-//change?
     dataDir = Form("%sDataAnalysis/MergedData/Output/",mnt.c_str());
-    // dataDir = "/ospool/uw-shared/projects/GATech_Otte/TrinityDemonstrator/DataAnalysis/MergedData/Output/";
     outDir = Form("%sDataAnalysis/flasher_calibration/Output/",mnt.c_str());
 
     std::string folString = argv[1];
