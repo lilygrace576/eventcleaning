@@ -40,7 +40,7 @@ int main(int argc, char **argv){
         fileNamesVec.end()
     );
 
-    std::vector<double> TotalAmplitudeValues(MaxNofChannels, 0.0);  // sum of amplitudes
+    std::vector<double> TotalAmplitudeValues(MaxNofChannels, 0.0);  // //MaxNoOfChannels = number of elements in vector (256), all starting at 0.0
     std::vector<double> AvgAmplitudeValuesPixels(MaxNofChannels, 0.0);  // avg amps for hled
     int hled_event_counter = 0;
 
@@ -93,61 +93,59 @@ int main(int argc, char **argv){
 
             for(int EventCounter = 0; EventCounter < (nEntries+nEntriesHLED); EventCounter++){
                 TH2F* hEvent = new TH2F("hEvent", "Event",16, -0.5, 15.5, 16, -0.5, 15.5);
-            
-                //
-                std::vector<float> BiasVoltage;
-                
                 //// std::vector<float> Amplitudes;
-                std::vector<float> Amplitudes44;
-                std::vector<float> Amplitudes415;
+                std::vector<float> Amplitudes44;    // Amp vector for 44 V events
+                std::vector<float> Amplitudes415;   // Amp vector for 41.5 V events
 
+                std::vector<float> BiasVoltage; // BV Vector for event
+                
                 std::string WhichEvent = "Test";
+
                 // this allow you to have all the info you need from the event in one for loop so you dont have to have one for HLED and one for Test since the events can sometimes cross over.
                 Pulse *pulse; 
-                if (EventCounter < nEntries) {
-            // TEST
-                    tree->GetEntry(EventCounter); 
-                    
-                    //
-                    BiasVoltage = ev->Gethv();
-                    float evSumV = accumulate(BiasVoltage.begin(), BiasVoltage.end(), 0.0);
-		            float evBVAvg = evSumV / BiasVoltage.size();
-                    float evRoundBVAvg = round(10 * evBVAvg) / 10;
+                if (EventCounter < nEntries) {  // Test Events
 
-                    for (int k = 0; k < MaxNofChannels; k++) {
-                        pulse = new Pulse(ev->GetSignalValue(k));
+                    tree->GetEntry(EventCounter); 
+
+                    BiasVoltage = ev->Gethv();  // get all bv values for this event (4)
+                    float evSumV = accumulate(BiasVoltage.begin(), BiasVoltage.end(), 0.0); // sum bv values
+		            float evBVAvg = evSumV / BiasVoltage.size();    // avg bv values
+                    float evRoundBVAvg = round(10 * evBVAvg) / 10; // round event bv avg
+
+                    for (int k = 0; k < MaxNofChannels; k++) {  //for pixel
+                        pulse = new Pulse(ev->GetSignalValue(k));   // get pulse signal
 
                         // Amplitudes.push_back(pulse->GetAmplitude());
+                        // check if 44 or 41.5 V event
                         if (evRoundBVAvg == 44.0){
-                            Amplitudes44.push_back(pulse->GetAmplitude());  // Test 44
+                            Amplitudes44.push_back(pulse->GetAmplitude());  // add event amplitude to 44 V event amp vector
                         }
                         if (evRoundBVAvg == 41.5){
-                            Amplitudes415.push_back(pulse->GetAmplitude()); // Test 415
+                            Amplitudes415.push_back(pulse->GetAmplitude()); // add event amplitude to 41.5 V event amp vector
                         }
-            
                         delete pulse;
                     }
                     
                 }   // end if test 
-                else {
-            // HLED
+                else {  // HLED events
+                    
                     treeHLED->GetEntry(EventCounter-nEntries);
                     
-                    //
-                    BiasVoltage = evHLED->Gethv();
-                    float evSumV = accumulate(BiasVoltage.begin(), BiasVoltage.end(), 0.0);
-		            float evBVAvg = evSumV / BiasVoltage.size();
-                    float evRoundBVAvg = round(10 * evBVAvg) / 10;
+                    BiasVoltage = evHLED->Gethv();  // get all bv values for this event (4)
+                    float evSumV = accumulate(BiasVoltage.begin(), BiasVoltage.end(), 0.0); // sum bv values
+		            float evBVAvg = evSumV / BiasVoltage.size();    // avg bv values
+                    float evRoundBVAvg = round(10 * evBVAvg) / 10;  // round event bv avg
 
-                    for (int k = 0; k < MaxNofChannels; k++) {
-                        pulse = new Pulse(evHLED->GetSignalValue(k));
+                    for (int k = 0; k < MaxNofChannels; k++) { // for pixel
+                        pulse = new Pulse(evHLED->GetSignalValue(k));   // get pulse signal
                         
                         // Amplitudes.push_back(pulse->GetAmplitude());
+                        // check if 44 or 41.5 V event
                         if (evRoundBVAvg == 44.0){
-                            Amplitudes44.push_back(pulse->GetAmplitude());  // HLED 44
+                            Amplitudes44.push_back(pulse->GetAmplitude());  // add event amplitude to 44 V event amp vector
                         }
                         if (evRoundBVAvg == 41.5){
-                            Amplitudes415.push_back(pulse->GetAmplitude()); // HLED 415
+                            Amplitudes415.push_back(pulse->GetAmplitude()); // add event amplitude to 41.5 V event amp vector
                         }
 
                         
@@ -159,61 +157,57 @@ int main(int argc, char **argv){
                 // float sumsq = 0;
                 float sumsq44 = 0;
                 float sumsq415 = 0;
+
                 // float RMS = 0;
                 float RMS44 = 0;
                 float RMS415 = 0;
                 
-                for (int i = 0; i < MaxNofChannels; i++){
-                    // sumsq += Amplitudes[i]*Amplitudes[i];
+                for (int i = 0; i < MaxNofChannels; i++){   // for pixel
+                    // sumsq += Amplitudes[i]*Amplitudes[i];    // add squared amp entry value to sumsQ
                     sumsq44 += Amplitudes44[i]*Amplitudes44[i];
                     sumsq415 += Amplitudes415[i]*Amplitudes415[i];
 
-                    // cout << "sumsq: " << sumsq << endl;
                     // RMS = sqrt(sumsq)/MaxNofChannels;
                     RMS44 = sqrt(sumsq44)/MaxNofChannels;
                     RMS415 = sqrt(sumsq415)/MaxNofChannels;
-
-                    // cout << "RMS: " << RMS << endl;
                 }
 
                 if (WhichEvent == "Test"){
                     // h1->Fill(util->GetEventAmplitudeSum(Amplitudes)/MaxNofChannels);
-                    h1->Fill(util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels);  // Avg Amp Test 44
-                    h5->Fill(util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels); // Avg Amp Test 415
+                    h1->Fill(util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels);  // fill h1 with avg amp for 44 V Test events
+                    h5->Fill(util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels); // fill h5 with avg amp of 41.5 V Test events
 
-                    // if (RMS < 2){
-                    //     cout << "Event Test " << EventCounter << " has a Pedestal RMS of " << RMS << endl;
-                    // }
-                    //
                     // h2->Fill(RMS);
-                    h2->Fill(RMS44);    // RMS Test 44
-                    h7->Fill(RMS415);   // RMS Test 415
+                    h2->Fill(RMS44);    // fill h2 with 44 V Test event RMS
+                    h7->Fill(RMS415);   // fill h7 with 41.5 V Test event RMS
                     
                 } else {
                     // h4->Fill(util->GetEventAmplitudeSum(Amplitudes)/MaxNofChannels);
-                    h4->Fill(util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels);  // Avg Amp HLED 44
-                    h6->Fill(util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels); // Avg Amp HLED 415
+                    h4->Fill(util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels);  // fill h4 with avg amp for 44 V HLED events
+                    h6->Fill(util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels); // fill h6 with avg amp for 41.5 V HLED events
 
                     // h3->Fill(RMS);
-                    h3->Fill(RMS44);    // RMS HLED 44
-                    h8->Fill(RMS415);   // RMS HLED 415
+                    h3->Fill(RMS44);    // fill h3 with 44 V HLED event RMS
+                    h8->Fill(RMS415);   // fill h8 with 41.5 V HLED event RMS
                 }
 
                 delete hEvent;
                 
+                // // old
                 // if (folString < "20241001"){
                 //     FlasherEventsCutOff = 350;
                 // }
-                
-                if (folString >= "20251017"){
+
+    ////////////////////////////////////////////////////////////////////////////////////
+                if (folString >= "20251017"){   // if after 2025/10/17
                     // FlasherEventsCutOff = 835;
                     FlasherEventsCutOff44 = 835;
-                    FlasherEventsCutOff415 = 200;   // ?
+                    FlasherEventsCutOff415 = 200;   // ??
                 }
-                if (folString >= "20251204"){
+                if (folString >= "20251204"){   // if after 2025/12/04
                     // FlasherEventsCutOff = 700;
                     FlasherEventsCutOff44 = 700;
-                    FlasherEventsCutOff415 = 200;   // ?
+                    FlasherEventsCutOff415 = 200;   // ??
                 }
 
                 // if (util->GetEventAmplitudeSum(Amplitudes)/MaxNofChannels >= FlasherEventsCutOff){    
@@ -222,24 +216,26 @@ int main(int argc, char **argv){
                 //         TotalAmplitudeValues[j] = TotalAmplitudeValues[j]+Amplitudes[j];
                 //     }
                 // }
-                if (util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels >= FlasherEventsCutOff44){    
-                    hled_event_counter +=1;     // hled event
-                    for(int j = 0; j<MaxNofChannels; j++){
-                        // ?
+                if (util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels >= FlasherEventsCutOff44){    // if avg 44 V event amp > 44 cutoff -> HLED
+                    hled_event_counter +=1;
+                    for(int j = 0; j<MaxNofChannels; j++){  //for pixel
+                        // TAV[pixel 0-256] = TAV[pixel 0-256] + Amp44[pixel 0-256]
+                        // add pixel amp from each event to that pixel TAV ->sum of amps for that pixel from each HLED event
                         TotalAmplitudeValues[j] = TotalAmplitudeValues[j]+Amplitudes44[j];
                     }
                 }
-                if (util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels >= FlasherEventsCutOff415){    
-                    hled_event_counter +=1;     // hled event
-                    for(int j = 0; j<MaxNofChannels; j++){
-                        // add hled 415 amp value
+                if (util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels >= FlasherEventsCutOff415){    // if avg 41.5 V event amp > 44 cutoff -> HLED
+                    hled_event_counter +=1;
+                    for(int j = 0; j<MaxNofChannels; j++){  //for pixel
+                        // add pixel amp from each event to that pixel TAV -> sum of amps for that pixel from each HLED event
                         TotalAmplitudeValues[j] = TotalAmplitudeValues[j]+Amplitudes415[j];
                     }
                 }
-                // TotalAmplitudeValues = HLED 44 AND 415
-                // hled_event_counter = HLED 44 AND 415
+                // TAV[j] = amplitude sum for each pixel from each HLED event regardless of BV
+    ////////////////////////////////////////////////////////////////////////////////////
 
             }   // end event loop
+
             delete evHLED;
             delete ev;
             delete fO;
@@ -269,38 +265,33 @@ int main(int argc, char **argv){
     }
 
     for(int j = 0; j<MaxNofChannels; j++){
-        // ??
+        // pixel AAVP = hled pixel amp sum / total num of HLED events = average amp for that pixel
         AvgAmplitudeValuesPixels[j] = TotalAmplitudeValues[j]/hled_event_counter;
-        if (AvgAmplitudeValuesPixels[j] < dead_pixel_cutoff){
+        if (AvgAmplitudeValuesPixels[j] < dead_pixel_cutoff){   // if pixel AAVP < dead pixel cutoff -> pixel AAVP = -1
             AvgAmplitudeValuesPixels[j] = -1;
-        } else {
+        } else {    // if pixel AAVP >= dead pixel cutoff -> add pixel TAV/total num of HLED events (AAVP) to AAVPM vector
             AvgAmplitudeValuesPixelsMedian.push_back(TotalAmplitudeValues[j]/hled_event_counter);
-
+            // AAVPM - contains average amp values for each pixel
         }
     }
 
 
-    // std::vector<double> CalibratedAmpCameraTimeBin(MaxNofChannels, 0.0);
-    Double_t median = util->Median(AvgAmplitudeValuesPixelsMedian);
+    Double_t median = util->Median(AvgAmplitudeValuesPixelsMedian); // find median of average amp values
     double minimum = 3; // for the canvas plot making the visualization better
-    for(int j = 0; j<MaxNofChannels; j++){
+    for(int j = 0; j<MaxNofChannels; j++){  // for pixel
         int nx, ny;
         plottools->FindBin(j, &nx, &ny);
-        double norm_median = AvgAmplitudeValuesPixels[j]/median;
+        double norm_median = AvgAmplitudeValuesPixels[j]/median;    // normalized median = pixel avg amp / median
         // keep the value -1 for bad pixels
         if (AvgAmplitudeValuesPixels[j] == -1){
             norm_median = -1;
         }
-        // CalibratedAmpCameraTimeBin[j]=norm_median;
         hcam_calib->SetBinContent(nx + 1, ny + 1, norm_median);
         cout << "Pixel: " << j << " Norm Median: " << norm_median << endl;
         if (norm_median < minimum && norm_median > 0.1){
-            // cout << "Avg Amplitude for pixel " << j << ": " << norm_median << endl;
             minimum = norm_median;
         }
     }
-    // for if you need a csv but histograms are so much better 
-    // util->writeVectorToFile(CalibratedAmpCameraTimeBin, Form("%s%s_FlasherCalibration_Factor.csv", outDir.c_str(), folString.c_str()));
 
     hcam_calib->SetStats(0);
     hcam_calib->GetXaxis()->SetLabelSize(0.03);
@@ -311,7 +302,6 @@ int main(int argc, char **argv){
     hcam_calib->GetYaxis()->SetTitleOffset(1.0); // Adjust Y-axis title offset
     hcam_calib->Draw("colz");
     plottools->DrawMUSICBoundaries();
-    // cout << "Minimum: " << minimum << endl;
     
     file = new TFile(Form("%s%s_FlasherCalibration_Factor.root", outDir.c_str(), folString.c_str()), "RECREATE");  // "RECREATE" to overwrite if it exists
     hcam_calib->Write("CamFlasher");
@@ -333,10 +323,10 @@ int main(int argc, char **argv){
     c_cleaned->cd(0);
    
 
-    //
-    //one hist with avg amps of 44 and 415 test
-    h1->SetLineColor(kBlue);
-    h5->SetLineColor(kViolet);
+
+    // Avg Amp Test Events Plot
+    h1->SetLineColor(kBlue);    // h1 - Test 44 Avg Amp
+    h5->SetLineColor(kViolet);  // h5 - Test 41.5 Avg Amp
     h5->Draw("HIST");
     h1->Draw("SAME");
     TLegend* leg = new TLegend(0.6,0.7,0.9,0.9);
@@ -348,9 +338,9 @@ int main(int argc, char **argv){
 
     c_cleaned->cd(0);
 
-    // one hist with avg amps of 44 and 415 hled
-    h4->SetLineColor(kRed);
-    h6->SetLineColor(kOrange); 
+    // Avg Amp HLED Events Plot
+    h4->SetLineColor(kRed); // h4 - HLED 44 Avg Amp
+    h6->SetLineColor(kOrange);  // h6 - HLED 41.5 Avg Amp  
     h6->Draw("HIST");
     h4->Draw("SAME");
     leg = new TLegend(0.6,0.7,0.9,0.9);
@@ -362,9 +352,9 @@ int main(int argc, char **argv){
 
     c_cleaned->cd(0);
     
-    //one hist w rms of 44 and 415 test
-    h2->SetLineColor(kBlue);
-    h7->SetLineColor(kViolet);
+    // RMS Test Events Plot
+    h2->SetLineColor(kBlue);    // h2 - Test 44 RMS
+    h7->SetLineColor(kViolet);  // h7 - Test 41.5 RMS
     h7->Draw("HIST");
     h2->Draw("SAME");
     leg = new TLegend(0.6,0.7,0.9,0.9);
@@ -376,9 +366,9 @@ int main(int argc, char **argv){
 
     c_cleaned->cd(0);
 
-    //one hist w rms of 44 and 415 hled
-    h3->SetLineColor(kRed);
-    h8->SetLineColor(kOrange);
+    // RMS HLED Events Plot
+    h3->SetLineColor(kRed); // h3 - HLED 44 RMS
+    h8->SetLineColor(kOrange);  // h8 - HLED 41.5 RMS
     h8->Draw("HIST");
     h3->Draw("SAME");
     leg = new TLegend(0.6,0.7,0.9,0.9);
@@ -390,51 +380,48 @@ int main(int argc, char **argv){
 
     c_cleaned->cd(0);
 
-    // Combined histogram with all Avg Amps: Test and HLED at 44V and 41.5V
-    h1->SetLineColor(kBlue);
-    h5->SetLineColor(kViolet);
-    h4->SetLineColor(kRed);
-    h6->SetLineColor(kOrange);
-    h5->Draw("HIST");          // first histogram, sets the frame, Test 41.5V
-    h1->Draw("HIST SAME");     // Test 44V
-    h4->Draw("HIST SAME");     // HLED 44V
-    h6->Draw("HIST SAME");     // HLED 41.5V
-
+    // Avg Amps ALL
+    h1->SetLineColor(kBlue);    // h1 - Test 44 Avg Amp
+    h5->SetLineColor(kViolet);  // h5 - Test 415 Avg Amp
+    h4->SetLineColor(kRed);     // h4 - HLED 44 Avg Amp
+    h6->SetLineColor(kOrange);  // h6 - HLED 415 Avg Amp
+    h5->Draw("HIST");          // first histogram, sets the frame (idk which to put)
+    h1->Draw("HIST SAME");
+    h4->Draw("HIST SAME");
+    h6->Draw("HIST SAME");
     leg = new TLegend(0.6, 0.65, 0.9, 0.9);
-    leg->AddEntry(h1, "Avg Amplitude Test 44V", "l");
-    leg->AddEntry(h5, "Avg Amplitude Test 41.5V", "l");
-    leg->AddEntry(h4, "Avg Amplitude HLED 44V", "l");
-    leg->AddEntry(h6, "Avg Amplitude HLED 41.5V", "l");
+    leg->AddEntry(h1, "Test 44V", "l");
+    leg->AddEntry(h5, "Test 41.5V", "l");
+    leg->AddEntry(h4, "HLED 44V", "l");
+    leg->AddEntry(h6, "HLED 41.5V", "l");
     leg->Draw("SAME");
-
     c_cleaned->Write("CombinedAvgAmp");
     delete leg;
+
     c_cleaned->cd(0);
     
 
-    // Combined histogram with all RMS : Test and HLED at 44V and 41.5V
-    h2->SetLineColor(kBlue);
-    h7->SetLineColor(kViolet);
-    h3->SetLineColor(kRed);
-    h8->SetLineColor(kOrange);
-    h7->Draw("HIST");          // first histogram, sets the frame, Test 41.5V
-    h2->Draw("HIST SAME");     // Test 44V
-    h3->Draw("HIST SAME");     // HLED 44V
-    h8->Draw("HIST SAME");     // HLED 41.5V
-
+    // RMS All
+    h2->SetLineColor(kBlue);    // h2 - Test 44 RMS
+    h7->SetLineColor(kViolet);  // h7 - Test 41.5 RMS
+    h3->SetLineColor(kRed);     // h3 - HLED 44 RMS
+    h8->SetLineColor(kOrange);  // h8 - HLED 41.5 RMS
+    h7->Draw("HIST");          // first histogram, sets the frame (idk which to put)
+    h2->Draw("HIST SAME");
+    h3->Draw("HIST SAME");
+    h8->Draw("HIST SAME");
     leg = new TLegend(0.6, 0.65, 0.9, 0.9);
-    leg->AddEntry(h2, "RMS Test 44V", "l");
-    leg->AddEntry(h7, "RMS Test 41.5V", "l");
-    leg->AddEntry(h3, "RMS HLED 44V", "l");
-    leg->AddEntry(h8, "RMS 41.5V", "l");
+    leg->AddEntry(h2, "Test 44V", "l");
+    leg->AddEntry(h7, "Test 41.5V", "l");
+    leg->AddEntry(h3, "HLED 44V", "l");
+    leg->AddEntry(h8, "41.5V", "l");
     leg->Draw("SAME");
-
     c_cleaned->Write("CombinedRMS");
     delete leg;
+
     c_cleaned->cd(0);
 
-    //
-
+    
     // h4->SetLineColor(kRed);
     // h4->Draw("HIST");
     // h1->Draw("SAME");
