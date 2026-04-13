@@ -9,31 +9,35 @@ export LD_LIBRARY_PATH=/exact/dict:/usr/lib/oracle/21/client64/lib:/usr/local/li
 
 
 DATE=$1
-FILENAME=$2
 
-echo "Running job for $DATE with file $FILENAME "
+echo "Running job for $DATE with file  "
 echo "Directories"
 ls -lh
-
 # Create necessary directories if they don't exist
-# add folder arg to merged data path
-mkdir -p DataAnalysis/MergedData/Output/$DATE/
+mkdir -p DataAnalysis/MergedData/Output/
 mkdir -p DataAnalysis/flasher_calibration/Output/
 
-# add folder arg to merged data path
-mv Merged_$FILENAME DataAnalysis/MergedData/Output/$DATE/
-echo "Running flasher calibration for $DATE and File $FILENAME"
-# ldd ./FileMerge
-# add folder arg
-./FlasherCalibration $DATE y $FILENAME
-
-cd 
-cd DataAnalysis/flasher_calibration/Output/
-chmod 774 *.root
-
+mv $DATE DataAnalysis/MergedData/Output/.
+echo "Moved $DATE to DataAnalysis/MergedData/Output/"
+cd DataAnalysis/MergedData/Output/
+ls -lh 
+cd $DATE
 pwd
 ls -lh
+cd $_CONDOR_SCRATCH_DIR
+mv FlasherCalibration DataAnalysis/flasher_calibration/.
+echo "Running flasher calibration for $DATE and File "
+cd DataAnalysis/flasher_calibration/
+ls -lh
+./FlasherCalibration $DATE $_CONDOR_SCRATCH_DIR/
+ls -lh
 
-cd
+cd $_CONDOR_SCRATCH_DIR
+cd DataAnalysis/flasher_calibration/Output/
+cd $_CONDOR_SCRATCH_DIR
+ls -lh
+# Copy results back to scratch
+cp -r DataAnalysis/flasher_calibration/Output .
+
 pwd
 ls -lh
