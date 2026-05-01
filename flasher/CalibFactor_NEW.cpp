@@ -40,9 +40,6 @@ int main(int argc, char **argv){
         fileNamesVec.end()
     );
 
-    // std::vector<double> TotalAmplitudeValues(MaxNofChannels, 0.0);  // //MaxNoOfChannels = number of elements in vector (256), all starting at 0.0
-    // std::vector<double> AvgAmplitudeValuesPixels(MaxNofChannels, 0.0);  // avg amps for hled
-    // int hled_event_counter = 0;
     std::vector<double> TotalAmplitudeValues44(MaxNofChannels, 0.0);  // //MaxNoOfChannels = number of elements in vector (256), all starting at 0.0
     std::vector<double> AvgAmplitudeValuesPixels44(MaxNofChannels, 0.0);  // avg amps for hled
     int hled_event_counter44 = 0;
@@ -76,21 +73,8 @@ int main(int argc, char **argv){
     //
     TH1F* h7 = (TH1F*)h2->Clone("h7");  // Test 415
     TH1F* h8 = (TH1F*)h2->Clone("h8");  // HLED 415
-    
-    int totalNightEntriesTest = 0;
-    int totalNightEntriesHLED = 0;
-    int totalNightEntriesTest44 = 0;
-    int totalNightEntriesTest415 = 0;
-    int totalNightEntriesHLED44 = 0;
-    int totalNightEntriesHLED415 = 0;
-
-    int sumAvgAmpPerFileTest44 = 0;
-    int sumAvgAmpPerFileTest415 = 0;
-    int sumAvgAmpPerFileHLED44 = 0;
-    int sumAvgAmpPerFileHLED415 = 0;
 
 
-    // for(int f = 47; f<80; f++){
     for(int f = 0; f<static_cast<int>(fileNamesVec.size()); f++){
         try {
             std::string FilePath = Form("%s%s",FolderPath.c_str(),fileNamesVec[f].c_str());
@@ -110,11 +94,10 @@ int main(int argc, char **argv){
             nEntries = tree->GetEntries();
             nEntriesHLED = treeHLED->GetEntries();
 
-
             if (nEntries==0) {
                 cout << "continue" << endl;
                 continue;
-            }   
+            } 
 
             for(int EventCounter = 0; EventCounter < (nEntries+nEntriesHLED); EventCounter++){
 
@@ -133,7 +116,8 @@ int main(int argc, char **argv){
                 std::string WhichEvent = "Test";
 
                 // this allow you to have all the info you need from the event in one for loop so you dont have to have one for HLED and one for Test since the events can sometimes cross over.
-                Pulse *pulse; 
+                Pulse *pulse;
+
                 if (EventCounter < nEntries) {  // Test Events
 
                     tree->GetEntry(EventCounter); 
@@ -149,8 +133,8 @@ int main(int argc, char **argv){
                         }
                         delete pulse;
                     }
-                    
-                }   // end if test 
+                }   // end if test
+
                 else {  // HLED events
                     treeHLED->GetEntry(EventCounter-nEntries);
                     for (int k = 0; k < MaxNofChannels; k++) { // for pixel
@@ -175,7 +159,7 @@ int main(int argc, char **argv){
 
                 float RMS44 = 0;
                 float RMS415 = 0;
-                
+
                 for (int i = 0; i < MaxNofChannels; i++){   // for pixel
                     if (Amplitudes44.size() != 0){
                         sumsq44 += Amplitudes44[i]*Amplitudes44[i];
@@ -187,54 +171,8 @@ int main(int argc, char **argv){
                     }       
                 }
 
-                if (WhichEvent == "Test"){
-                    totalFileEntriesTest += 1;
-                    if(evRoundBVAvg == 44.0){
-                        totalFileEntriesTest44 += 1;
-                        h1->Fill(util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels);  // fill h1 with avg amp for 44 V Test events
-                        int EvAvgAmpTest44 = util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels;
-                        sumEvAvgAmpTest44 += EvAvgAmpTest44;
-                        h2->Fill(RMS44);    // fill h2 with 44 V Test event RMS
-                    } 
-                    if(evRoundBVAvg == 41.5){
-                        totalFileEntriesTest415 += 1;
-                        h5->Fill(util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels); // fill h5 with avg amp of 41.5 V Test events
-                        int EvAvgAmpTest415 = util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels;
-                        sumEvAvgAmpTest415 += EvAvgAmpTest415;
-                        h7->Fill(RMS415);   // fill h7 with 41.5 V Test event RMS
-                    }
-                    // h1->Fill(util->GetEventAmplitudeSum(Amplitudes)/MaxNofChannels);
-                    // h2->Fill(RMS);
-                    
-                } else {
-                    totalFileEntriesHLED += 1;
-                    if(evRoundBVAvg == 44.0){
-                        totalFileEntriesHLED44 += 1;
-                        h4->Fill(util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels);  // fill h4 with avg amp for 44 V HLED events
-                        int EvAvgAmpHLED44 = util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels;
-                        sumEvAvgAmpHLED44 += EvAvgAmpHLED44;
-                        h3->Fill(RMS44);    // fill h3 with 44 V HLED event RMS
-                    } 
-                    if(evRoundBVAvg == 41.5){
-                        totalFileEntriesHLED415 += 1;
-                        h6->Fill(util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels); // fill h6 with avg amp for 41.5 V HLED events
-                        int EvAvgAmpHLED415 = util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels;
-                        sumEvAvgAmpHLED415 += EvAvgAmpHLED415;
-                        h8->Fill(RMS415);   // fill h8 with 41.5 V HLED event RMS
-                    }
-
-                    // h4->Fill(util->GetEventAmplitudeSum(Amplitudes)/MaxNofChannels);
-                    // h3->Fill(RMS);
-                    
-                }
-
-                delete hEvent;
-                
-                // // old
-                // if (folString < "20241001"){
-                //     FlasherEventsCutOff = 350;
-                // }
-
+                /////
+                // can i place this before deleting the hevent?
                 if (folString >= "20251017"){   // if after 2025/10/17
                     FlasherEventsCutOff44 = 835;
                     FlasherEventsCutOff415 = 200;   // ??
@@ -244,80 +182,109 @@ int main(int argc, char **argv){
                     FlasherEventsCutOff415 = 200;   // ??
                 }
 
-                // if (util->GetEventAmplitudeSum(Amplitudes)/MaxNofChannels >= FlasherEventsCutOff){    
-                //     hled_event_counter +=1;
-                //     for(int j = 0; j<MaxNofChannels; j++){
-                //         TotalAmplitudeValues[j] = TotalAmplitudeValues[j]+Amplitudes[j];
-                //     }
-                // }
-                if(evRoundBVAvg == 44.0){
-                    if (util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels >= FlasherEventsCutOff44){    // if avg 44 V event amp > 44 cutoff -> HLED
-                        hled_event_counter44 +=1;
-                        for(int j = 0; j<MaxNofChannels; j++){  //for pixel
-                            TotalAmplitudeValues44[j] = TotalAmplitudeValues44[j]+Amplitudes44[j];
+                if (WhichEvent == "Test"){  //labeled Test
+                    // 44 V
+                    if(evRoundBVAvg == 44.0){
+                        // actually hled
+                        if (util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels >= FlasherEventsCutOff44){
+                            hled_event_counter44 += 1;
+                            h4->Fill(util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels);  // fill h4 with avg amp for 44 V HLED events
+                            h3->Fill(RMS44);
+                            for(int j = 0; j<MaxNofChannels; j++){  //for pixel
+                                TotalAmplitudeValues44[j] = TotalAmplitudeValues44[j]+Amplitudes44[j];
+                            }
+                        }
+                        // actually Test
+                        else{
+                            test_event_counter44 += 1;
+                            h1->Fill(util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels);  // fill h1 with avg amp for 44 V Test events
+                            h2->Fill(RMS44);    // fill h2 with 44 V Test event RMS
+                        }
+
+                   }
+                   // 41.5 V
+                   if(evRoundBVAvg == 41.5){
+                        // actually hled 
+                        if (util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels >= FlasherEventsCutOff415){    // if avg 41.5 V event amp > 44 cutoff -> HLED
+                            hled_event_counter415 +=1;
+                            h6->Fill(util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels); // fill h6 with avg amp for 41.5 V HLED events
+                            h8->Fill(RMS415);
+                            for(int j = 0; j<MaxNofChannels; j++){  //for pixel
+                                TotalAmplitudeValues415[j] = TotalAmplitudeValues415[j]+Amplitudes415[j];
+                            }
+                        }
+                        // actually Test
+                        else{
+                            test_event_counter415 += 1;
+                            h5->Fill(util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels); // fill h5 with avg amp of 41.5 V Test events
+                            h7->Fill(RMS415);
                         }
                     }
-                    else{
-                        test_event_counter44 += 1;
-                    }
-                }
+                }   // end if test
                 
-                if(evRoundBVAvg == 41.5){
-                    if (util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels >= FlasherEventsCutOff415){    // if avg 41.5 V event amp > 44 cutoff -> HLED
-                        hled_event_counter415 +=1;
-                        for(int j = 0; j<MaxNofChannels; j++){  //for pixel
-                            TotalAmplitudeValues415[j] = TotalAmplitudeValues415[j]+Amplitudes415[j];
+                else{ // labeled HLED
+                    // 44 V
+                    if(evRoundBVAvg == 44.0){
+                        // actually HLED
+                        if (util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels >= FlasherEventsCutOff44){
+                            hled_event_counter44 += 1;
+                            h4->Fill(util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels);  // fill h4 with avg amp for 44 V HLED events
+                            h3->Fill(RMS44);
+                            for(int j = 0; j<MaxNofChannels; j++){  //for pixel
+                                TotalAmplitudeValues44[j] = TotalAmplitudeValues44[j]+Amplitudes44[j];
+                            }
+                        }
+                        else{ // actually Test
+                            test_event_counter44 += 1;
+                            h1->Fill(util->GetEventAmplitudeSum(Amplitudes44)/MaxNofChannels);  // fill h1 with avg amp for 44 V Test events
+                            h2->Fill(RMS44);
                         }
                     }
-                    else{
-                        test_event_counter415 += 1;
-                    }
-                }
-                
+                // 415 V
+                    if(evRoundBVAvg == 41.5){
+                        // actially HLED
+                        if (util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels >= FlasherEventsCutOff415){    // if avg 41.5 V event amp > 44 cutoff -> HLED
+                            hled_event_counter415 +=1;
+                            h6->Fill(util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels); // fill h6 with avg amp for 41.5 V HLED events
+                            h8->Fill(RMS415);
+                            for(int j = 0; j<MaxNofChannels; j++){  //for pixel
+                                TotalAmplitudeValues415[j] = TotalAmplitudeValues415[j]+Amplitudes415[j];
+                            }
+                        }
+                        // actually Test
+                        else{
+                            test_event_counter415 += 1;
+                            h5->Fill(util->GetEventAmplitudeSum(Amplitudes415)/MaxNofChannels); // fill h5 with avg amp of 41.5 V Test events
+                            h7->Fill(RMS415);
+                        }
+                    }    
+
+                }   //end if hled
+
+                delete hEvent;  // placement?
+
             }   // end event loop
-
-            // for averages
-            // totalNightEntriesTest += totalFileEntriesTest;
-            // totalNightEntriesHLED += totalFileEntriesHLED;
-            // totalNightEntriesTest44 += totalFileEntriesTest44;
-            // totalNightEntriesTest415 += totalFileEntriesTest415;
-            // totalNightEntriesHLED44 += totalFileEntriesHLED44;
-            // totalNightEntriesHLED415 += totalFileEntriesHLED415;
-
-            // sumAvgAmpPerFileTest44 += sumEvAvgAmpTest44;
-            // sumAvgAmpPerFileTest415 += sumEvAvgAmpTest415;
-            // sumAvgAmpPerFileHLED44 += sumEvAvgAmpHLED44;
-            // sumAvgAmpPerFileHLED415 += sumEvAvgAmpHLED415;
 
             delete evHLED;
             delete ev;
             delete fO;
             delete tree;
             delete treeHLED;
+
         }   // end try
+
         catch (const std::exception& e){
             std::cerr << "Error: " << e.what() << std::endl;
             continue;
         }
+
     }   // end file loop
-
-// averages
-    // int nightAvgAmpTest44 = sumAvgAmpPerFileTest44 / totalNightEntriesTest44;
-    // int nightAvgAmpTest415 = sumAvgAmpPerFileTest415 / totalNightEntriesTest415;
-    // int nightAvgAmpHLED44 = sumAvgAmpPerFileHLED44 / totalNightEntriesHLED44;
-    // int nightAvgAmpHLED415 = sumAvgAmpPerFileHLED415 / totalNightEntriesHLED415;
-
-    // cout << "night 44 Test Avg Amp: " << nightAvgAmpTest44 << endl;
-    // cout << "night 415 Test Avg Amp: " << nightAvgAmpTest415 << endl;
-    // cout << "night 44 HLED Avg Amp: " << nightAvgAmpHLED44 << endl;
-    // cout << "night 415 HLED Avg Amp: " << nightAvgAmpHLED415 << endl;
-
 
     TCanvas* c_cleaned = new TCanvas("CleanedDisplay", "Cleaned CameraPlot", 950, 1000);
     // TH2F* hcam_calib = new TH2F("hcam_calib", "Calibration factor from Flasher",16, -0.5, 15.5, 16, -0.5, 15.5);
     TH2F* hcam_calib44 = new TH2F("hcam_calib", "Calibration factor from Flasher",16, -0.5, 15.5, 16, -0.5, 15.5);
     TH2F* hcam_calib415 = (TH2F*)hcam_calib44->Clone("hcam_calib415");
-    
+
     std::vector<double> AvgAmplitudeValuesPixelsMedian44;
     std::vector<double> AvgAmplitudeValuesPixelsMedian415;
     double dead_pixel_cutoff = 750;
@@ -555,8 +522,5 @@ int main(int argc, char **argv){
     util->setFilePermissions(Form("%s%s_FlasherCalibration_Factor.root", outDir.c_str(), folString.c_str()));
 
     return 0;
-}
 
-
-
-
+}   // end main
