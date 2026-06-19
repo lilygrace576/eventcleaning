@@ -215,11 +215,11 @@ void TelescopeInformationMerge3(CSVData& csvdata,std::string filename, std::stri
         
 		// Find the closest sunmoon time 
         // for (int i=0; i < SunmoonTime.size();i++){
-            //     cout << SunmoonTime[i] << endl;
-            // }
-            int SMXclosestIndex = findClosestIndex(csvdata.GetSunmoonTime(), convtime);	
-            // std::cout << "Closest value to Event time for sunmoon: " << convtime << " is " << std::fixed << std::setprecision(0)<< SunmoonTime[SMXclosestIndex] << ", "<< SMXclosestIndex<< std::endl;
-            // std::cout << "Closest value to Event time for sunmoon: " << convtime << " is " << std::setprecision(0)<< SunmoonTime[SMXclosestIndex] << std::endl;
+        //     cout << SunmoonTime[i] << endl;
+        // }
+        int SMXclosestIndex = findClosestIndex(csvdata.GetSunmoonTime(), convtime);	
+        // std::cout << "Closest value to Event time for sunmoon: " << convtime << " is " << std::fixed << std::setprecision(0)<< SunmoonTime[SMXclosestIndex] << ", "<< SMXclosestIndex<< std::endl;
+        // std::cout << "Closest value to Event time for sunmoon: " << convtime << " is " << std::setprecision(0)<< SunmoonTime[SMXclosestIndex] << std::endl;
             
             
             
