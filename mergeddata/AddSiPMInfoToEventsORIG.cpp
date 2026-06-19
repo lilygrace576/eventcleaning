@@ -18,7 +18,6 @@ int main(int argc, char **argv) {
         std::cout << "using mounted directory path" << std::endl;
         mnt=mount.c_str();
         dataDir = Form("%sDataAnalysis/MergedData/Output/",mnt.c_str());
-
     }
 
     // Get the Arguments
@@ -26,6 +25,7 @@ int main(int argc, char **argv) {
     // Load in all the files
     std::string FolderPath = Form("%s%s/",dataDir.c_str(),folString.c_str());
     std::vector<std::string>fileNamesVec;
+    cout << "Folder Path: " << FolderPath << endl;
     if (filename_argument != "Merged_n"){ // if the file name not specified then do all files in the directory
         std::cout << "using specific file name" << std::endl;
         // std::string specificfile = Form("%s%s",FolderPath.c_str(),filename_argument.c_str());
@@ -45,7 +45,9 @@ int main(int argc, char **argv) {
         }
     
 
-        const double GAIN_REF = 22.1; // at 25�C
+///////////////////////////////////////////////////////////////////////////////////////////////////
+        const double GAIN_REF = 22.1; // at 25�C        //38.2??
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
         std::vector<std::string> treeNames = {"HLED", "BiFocal", "Forced", "Test"};
 
@@ -57,7 +59,7 @@ int main(int argc, char **argv) {
             }
 
             std::cout << "Processing tree: " << treeName << std::endl;
-
+            
             // Set up input branch
             IEvent* ev = new IEvent();
             tree->SetBranchAddress("Events", &ev);
@@ -75,6 +77,7 @@ int main(int argc, char **argv) {
             std::vector<double> tempCorrection(256);
             std::vector<double> relOverVoltage(256);
             std::vector<double> amplitudeToPE(256);
+            std::vector<double> pedestal(256);
 
             double hvSettingPx, relOverV, overV;
 
@@ -87,25 +90,28 @@ int main(int argc, char **argv) {
 
                 for (int j = 0; j < 256; ++j) {
                     hvSettingPx = hv[IUtilities::GetHVChannel(j) - 1];
-                    relOverV = ICalibration::GetRelativeOverVoltage(j, hvSettingPx, 44);
+                    relOverV = ICalibration::GetRelativeOverVoltage(j, hvSettingPx, 44);    // change to 41.5
                     overV = ICalibration::GetOverVoltage(j, hvSettingPx);
                     tempCorrection[j] = ICalibration::GetRelativeGain(j, sipmTemp[j / 16], hvSettingPx);
 
                     Pulse* pulse = new Pulse(ev->GetSignalValue(j));
                     double amplitude = pulse->GetAmplitude();
+                    double ped = pulse->GetPedestal();
                     delete pulse;
 
-                    absoluteGain[j] = GAIN_REF * (1.0 / tempCorrection[j]);
-                    amplitudeToPE[j] = amplitude / absoluteGain[j];
-                    relOverVoltage[j] = relOverV;
+                    absoluteGain[j] = GAIN_REF * (1.0 / tempCorrection[j]);     // using dif GAIN_REF for 41.5
+                    amplitudeToPE[j] = amplitude / absoluteGain[j];             // 
+                    relOverVoltage[j] = relOverV;                               //
+                    pedestal[j] = ped;
                 }
-
-                sipmInfo->SetGain(absoluteGain);
+                sipmInfo->SetGain(absoluteGain);                                //
                 sipmInfo->SetTCorrection(tempCorrection);
-                sipmInfo->SetAmplToPE(amplitudeToPE);
-                sipmInfo->SetRelOverV(relOverVoltage);
+                sipmInfo->SetAmplToPE(amplitudeToPE);                           //
+                sipmInfo->SetPedestal(pedestal);
+                sipmInfo->SetRelOverV(relOverVoltage);                          //
 
                 sipmBranch->Fill();
+                // auto pedestalVec = sipmInfo->GetPedestal();
             }
             tree->Write("", TObject::kOverwrite);
 
