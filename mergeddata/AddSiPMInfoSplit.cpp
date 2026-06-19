@@ -44,8 +44,11 @@ int main(int argc, char **argv) {
             continue; // Skip to the next branch if not present
         }
     
-
-        const double GAIN_REF = 22.1; // at 25�C
+        // gain ref // at 25�C
+        // 44V
+        const double GAIN_REF44 = 22.1;
+        // 41.5V
+        const double GAIN_REF415 = 22.1; // change number
 
         std::vector<std::string> treeNames = {"HLED", "BiFocal", "Forced", "Test"};
 
@@ -71,41 +74,91 @@ int main(int argc, char **argv) {
 
             std::vector<float> hv;
             std::vector<float> sipmTemp;
-            std::vector<double> absoluteGain(256);
-            std::vector<double> tempCorrection(256);
-            std::vector<double> relOverVoltage(256);
-            std::vector<double> amplitudeToPE(256);
 
-            double hvSettingPx, relOverV, overV;
+            // 44V
+            std::vector<double> absoluteGain44(256);
+            std::vector<double> tempCorrection44(256);
+            std::vector<double> relOverVoltage44(256);
+            std::vector<double> amplitudeToPE44(256);
+            // 41.5V
+            std::vector<double> absoluteGain415(256);
+            std::vector<double> tempCorrection415(256);
+            std::vector<double> relOverVoltage415(256);
+            std::vector<double> amplitudeToPE415(256);
+
+            // 44V
+            double hvSettingPx44, relOverV44, overV44;
+            // 41.5 V
+            double hvSettingPx415, relOverV415, overV415;
 
             Long64_t nEntries = tree->GetEntries();
             for (Long64_t i = 0; i < nEntries; ++i) {
                 tree->GetEntry(i);
 
                 hv = ev->Gethv();
+                float evSumHV = accumulate(hv.begin(), hv.end(), 0.0);
+                float evHVAvg = evSumHV / hv.size();
+                float evRoundHVAvg = round(10 * evHVAvg) / 10;
+
                 sipmTemp = ev->GetSiPMTemp();
 
                 for (int j = 0; j < 256; ++j) {
-                    hvSettingPx = hv[IUtilities::GetHVChannel(j) - 1];
-                    relOverV = ICalibration::GetRelativeOverVoltage(j, hvSettingPx, 44);
-                    overV = ICalibration::GetOverVoltage(j, hvSettingPx);
-                    tempCorrection[j] = ICalibration::GetRelativeGain(j, sipmTemp[j / 16], hvSettingPx);
+                    if (evRoundHVAvg == 44.0){
+                        hvSettingPx44 = hv[IUtilities::GetHVChannel(j) - 1];
+                        relOverV44 = ICalibration::GetRelativeOverVoltage(j, hvSettingPx44, 44);
+                        overV44 = ICalibration::GetOverVoltage(j, hvSettingPx44);
+                        tempCorrection44[j] = ICalibration::GetRelativeGain(j, sipmTemp[j / 16], hvSettingPx44);
 
-                    Pulse* pulse = new Pulse(ev->GetSignalValue(j));
-                    double amplitude = pulse->GetAmplitude();
-                    delete pulse;
+                        Pulse* pulse = new Pulse(ev->GetSignalValue(j));
+                        double amplitude = pulse->GetAmplitude();
+                        delete pulse;
 
-                    absoluteGain[j] = GAIN_REF * (1.0 / tempCorrection[j]);
-                    amplitudeToPE[j] = amplitude / absoluteGain[j];
-                    relOverVoltage[j] = relOverV;
+                        absoluteGain44[j] = GAIN_REF44 * (1.0 / tempCorrection44[j]);
+                        amplitudeToPE44[j] = amplitude / absoluteGain44[j];
+                        relOverVoltage44[j] = relOverV44;
+                    }
+                    if (evRoundHVAvg == 41.5){
+                        hvSettingPx415 = hv[IUtilities::GetHVChannel(j) - 1];
+                        relOverV415 = ICalibration::GetRelativeOverVoltage(j, hvSettingPx, 41.5);
+                        overV415 = ICalibration::GetOverVoltage(j, hvSettingPx415);
+                        tempCorrection415[j] = ICalibration::GetRelativeGain(j, sipmTemp[j / 16], hvSettingPx415);
+
+                        Pulse* pulse = new Pulse(ev->GetSignalValue(j));
+                        double amplitude = pulse->GetAmplitude();
+                        delete pulse;
+
+                        absoluteGain415[j] = GAIN_REF415 * (1.0 / tempCorrection415[j]);
+                        amplitudeToPE415[j] = amplitude / absoluteGain415[j];
+                        relOverVoltage415[j] = relOverV415;
+                    }
+                    
                 }
 
-                sipmInfo->SetGain(absoluteGain);
-                sipmInfo->SetTCorrection(tempCorrection);
-                sipmInfo->SetAmplToPE(amplitudeToPE);
-                sipmInfo->SetRelOverV(relOverVoltage);
+                if (evRoundHVAvg == 44.0){
+                    sipmInfo->SetGain(absoluteGain44);
+                    sipmInfo->SetTCorrection(tempCorrection44);
+                    sipmInfo->SetAmplToPE(amplitudeToPE44);
+                    sipmInfo->SetRelOverV(relOverVoltage44);
 
-                sipmBranch->Fill();
+                    sipmBranch->Fill();
+                }
+                if (evRoundHVAvg == 41.5){
+                    sipmInfo->SetGain(absoluteGain415);
+                    sipmInfo->SetTCorrection(tempCorrection415);
+                    sipmInfo->SetAmplToPE(amplitudeToPE415);
+                    sipmInfo->SetRelOverV(relOverVoltage415);
+
+                    sipmBranch->Fill();
+                }
+
+
+
+                // sipmInfo->SetGain(absoluteGain);
+                // sipmInfo->SetTCorrection(tempCorrection);
+                // sipmInfo->SetAmplToPE(amplitudeToPE);
+                // sipmInfo->SetRelOverV(relOverVoltage);
+
+                // sipmBranch->Fill();
             }
             tree->Write("", TObject::kOverwrite);
 
