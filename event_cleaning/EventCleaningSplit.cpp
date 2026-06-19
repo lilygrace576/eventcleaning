@@ -5,6 +5,9 @@
 //and the pdf in this folder
 
 
+// add flags for 44 and 41.5
+// flasher events cutoff 44:650, 41.5:200
+
 int main(int argc, char **argv){
     if(argc < 1){
         cout << "Too few arguments; please include the date (YYYYMMDD) data directory to summarize" << endl;
@@ -18,20 +21,19 @@ int main(int argc, char **argv){
     if (mount == "y"){ // with usingin htcondor you need to have contianers and some use full paths and other use mounts this lets you specify
         std::cout << "using mounted directory path" << std::endl;
         mnt="/mnt/";
+        dataDir = "/mnt/DataAnalysis/MergedData/Output/";
+        neighborDir = "/mnt/DataAnalysis/event_cleaning/ClusterCleaning/neighbors/";
+        CalibrationFactorDir = "/mnt/DataAnalysis/flasher_calibration/Output/";
+        outDir = "/mnt/DataAnalysis/event_cleaning/Output/";
     } else if (mount != "n"){
         std::cout << "using specific directory path" << std::endl;
         mnt=mount.c_str();
+        dataDir = Form("%sDataAnalysis/MergedData/Output/",mnt.c_str());
+        neighborDir = Form("%sDataAnalysis/event_cleaning/ClusterCleaning/neighbors/",mnt.c_str());
+        CalibrationFactorDir = Form("%sDataAnalysis/flasher_calibration/Output/",mnt.c_str());
+        outDir = Form("%sDataAnalysis/event_cleaning/Output/",mnt.c_str());
     }
-    
-    dataDir = Form("%sDataAnalysis/MergedData/Output/",mnt.c_str());
-    neighborDir = Form("%sDataAnalysis/event_cleaning/ClusterCleaning/neighbors/",mnt.c_str());
-    CalibrationFactorDir = Form("%sDataAnalysis/flasher_calibration/Output/",mnt.c_str());
-    outDir = Form("%sDataAnalysis/event_cleaning/Output/",mnt.c_str());
-    outDirSim = Form("%sDataAnalysis/event_cleaning/OutputSim/",mnt.c_str());
-    outDirBkg = Form("%sDataAnalysis/event_cleaning/OutputBkg/",mnt.c_str());
-    outDirMuon = Form("%sDataAnalysis/event_cleaning/OutputMuon/",mnt.c_str());
-    simDir = Form("%ssimscripts/convertSims/Output/",mnt.c_str());
-    // simDir = Form("%sDataAnalysis/SimulationAnalysis/scripts/first_setdata/",mnt.c_str());
+
     
 
     // Get the Arguments 
@@ -52,16 +54,13 @@ int main(int argc, char **argv){
         
     } else if (folString.find("muon")==0) {
         whatData = "muon";
-
         fileNamesVec=util->readFileToVectorString(Form("%s%s.txt",muonDir.c_str(),folString.c_str()));
 
     } else if (folString.find("sim")==0) {
         whatData = "sim";
         folString = folString.substr(3, 19); // Extract date from filename
-        std::string simfolder = folString.substr(8,20);
-        cout << "Simulation Information: " << folString << endl;
+        // cout << "Simulation Information: " << folString << endl;
         FolderPath = Form("%s%s/",simDir.c_str(),folString.c_str());
-        cout << "FolderPath: " <<FolderPath << endl;
         fileNamesVec=util->GetFilesInDirectory(FolderPath,".root");
         // remove files in the vec that have plots_
         fileNamesVec.erase(
@@ -74,7 +73,6 @@ int main(int argc, char **argv){
             ),
             fileNamesVec.end()
         );
-        cout << "Number of simulation files found: " << fileNamesVec.size() << endl;
     } else {
         if (filename_argument != "n"){ // if the file name not specified then do all files in the directory
         // std::cout << "using specific file name" << std::endl;
@@ -185,6 +183,7 @@ int main(int argc, char **argv){
             std::cout << "Total Number of Sim Test Events: " << nEntries << std::endl;
         }
         
+        // std::cout << "here" << std::endl;
         
         // loops through each event in a file
         for(int EventCounter = 0; EventCounter < TotalEvents; EventCounter++){
@@ -200,6 +199,7 @@ int main(int argc, char **argv){
             Pulse *pulse;
             
             if(whatData != "muon") {
+                // std::cout << "!= muon" << std::endl;
                 if (EventCounter < nEntries) {
                     tree->GetEntry(EventCounter);
                     TrigMus = ev->GetROIMusicID();
@@ -231,6 +231,7 @@ int main(int argc, char **argv){
                     AmplitudesTimeBin.push_back(pulse1->GetAmplitude());
                     delete pulse;
                     delete pulse1;
+                    // std::cout << "here" << std::endl;
                 }
 
             } else if  (whatData == "muon"){
@@ -247,8 +248,7 @@ int main(int argc, char **argv){
                     delete pulse;
 
                 }
-            }
-            
+            }            
             
             
             cev->SetTriggeredMUSICID(TrigMus[0]);
@@ -262,11 +262,14 @@ int main(int argc, char **argv){
                 
                 // CorePixelCutOff = 100;
                 std::vector<double> fakeGain(256, 1.0); 
-                cev->SetAmplitudeValuesTimeBin(AmplitudesTimeBin,CalibrationFactorDir, std::to_string(20241011),fakeGain);
+///////////////////////////////////////////////////////////////////////////////////////////////////
+                cev->SetAmplitudeValuesTimeBin(AmplitudesTimeBin,CalibrationFactorDir, std::to_string(20241011),fakeGain,44.0);     // change to 415
+                // cev->SetAmplitudeValuesTimeBin(AmplitudesTimeBin,CalibrationFactorDir, std::to_string(20241011),fakeGain,415);
             } else {
-                cev->SetAmplitudeValuesTimeBin(AmplitudesTimeBin,CalibrationFactorDir, std::to_string(cev->GetEventDate()),sipmInfo->GetGain());
-
+                cev->SetAmplitudeValuesTimeBin(AmplitudesTimeBin,CalibrationFactorDir, std::to_string(cev->GetEventDate()),sipmInfo->GetGain(),44.0);       //change to 41.5
+                // cev->SetAmplitudeValuesTimeBin(AmplitudesTimeBin,CalibrationFactorDir, std::to_string(cev->GetEventDate()),sipmInfo->GetGain(),415);
             }
+
             cev->SetPeakTimeBin(PeakTimeBin);
             AmplitudesTimeBin = cev->GetAmplitudeValuesTimeBin(); // reset the  amplitudesTimeBin to be aboslute gain calibrated
             cev->SetAverageAmplitude(util->GetEventAverageAmplitude(cev->GetAmplitudeValuesTimeBin()));
@@ -300,7 +303,7 @@ int main(int argc, char **argv){
             eventInfo->SetRMS(cev->GetRMS());
             eventInfo->SetAvgAmp(cev->GetAverageAmplitude());
             
-            
+            // dif value for 41.5??
             if (cev->GetRMSoverAvgAmp() < 0.15 && whatData != "muon" && whatData != "sim") {
                 plothelp->AddEventFlags(9);
                 eventInfo->SetEventFlag(9); // HLED  event
@@ -344,7 +347,10 @@ int main(int argc, char **argv){
             
             cout << "triggered  Music: " <<cev->GetTriggeredMUSICID() << endl;
             cev->SetMaxAmplitude(util->GetMaximum(cev->GetAmplitudeValuesTimeBin(),cev->GetTriggeredMUSICID()));
+////////////////////////////////////////////////////////////////////////////////
+            // IUtilities.h: inline static float ADCtoPEratio = 24.1
             if (cev->GetMaxAmplitude() < TriggeredChannelAmpCutOff/util->GetADCtoPEratio()) {
+////////////////////////////////////////////////////////////////////////////////
                 plothelp->AddEventFlags(1);
                 eventInfo->SetEventFlag(1);
                 treeSims->Fill();
@@ -390,7 +396,7 @@ int main(int argc, char **argv){
             std::string filenameTitle = cev->GetFilename();
             int pos = filenameTitle.find("T");
             filenameTitle = filenameTitle.substr(pos+1, 5);
-
+            
             if (whatData == "sim") {
                 std::string temp = (cev->GetFilename()).substr(52,3);
                 filenameTitle = folString.substr(9,6);
@@ -433,7 +439,9 @@ int main(int argc, char **argv){
             hcam_panel2 = (TH2F*)hcam_panel1->Clone("hcam_panel2");
             hcam_panel2->SetTitle(Form("Amplitude cut Img --N# %i --F# %s-- E# %i ", cev->GetEventDate(), filenameTitle.c_str() ,cev->GetEventNumber()));
             hcam_panel2->SetDirectory(0);
+////////////////////////////////////////////////////////////////////////////////
             cev->SetPanel2(hcam_panel2,CorePixelAmpCutOff/util->GetADCtoPEratio());
+////////////////////////////////////////////////////////////////////////////////
             std::vector<int> survivingPanel2Pixels = cev->GetSurvivingPixelPanel2();
             if (survivingPanel2Pixels.size() < static_cast<std::vector<int>::size_type>(PixelSurviveCutOff)) {
                 eventInfo->SetEventFlag(2);
@@ -618,6 +626,13 @@ int main(int argc, char **argv){
     plothelp->PlothnCoreSPC(c_cleaned, OutputFilePDF);
     plothelp->PlothCRSPC(c_cleaned, OutputFilePDF);
     plothelp->PlothSIZEWandL(c_cleaned, OutputFilePDF);
+    plothelp->PlotPixelsDistanceToMajorAxis(c_cleaned, OutputFilePDF);
+    plothelp->PlotPixelsRatioDistanceToMajorAxis(c_cleaned, OutputFilePDF);
+    plothelp->PlotdistRMSandWeightedRMS(c_cleaned, OutputFilePDF);
+    plothelp->PlotPixelsOnandOffMajorAxis(c_cleaned, OutputFilePDF);
+    plothelp->PlothRMSvsRatioDistance(c_cleaned, OutputFilePDF);
+    plothelp->PlothWRMSvsRatioDistance(c_cleaned, OutputFilePDF);
+    plothelp->PlothOnOffMajorAxisvsratio(c_cleaned, OutputFilePDF);
 
     file->Close();
     c_cleaned->Print(OutputFilePDFClose.c_str());
